@@ -58,3 +58,7 @@ The repository includes a Render Blueprint in `render.yaml`. It creates a Node w
 To deploy, push this repository to GitHub, then in Render choose **New + → Blueprint**, connect the repository, and approve the Blueprint. Render generates `AUTH_SECRET` automatically. After the first deploy, the app is available at its `onrender.com` URL. Demo logins are listed above; change their passwords before sharing a public deployment.
 
 The persistent disk is attached to one service instance, so this SQLite setup is for a small demo and cannot be scaled horizontally. For a larger deployment, use a hosted database.
+
+### Netlify
+
+Netlify uses serverless functions, so the local `file:dev.db` database is not persistent there. Use a hosted libSQL database such as Turso and set `DATABASE_URL` to its `libsql://...` URL, `DATABASE_AUTH_TOKEN` to its database token, and `AUTH_SECRET` to a long random value in Netlify's environment settings. Give these variables both **Builds** and **Functions** scope. The included `netlify.toml` runs `npm run netlify:build`, which applies the schema and inserts demo rows only when the database is empty before building the app. Never commit database tokens or production secrets.

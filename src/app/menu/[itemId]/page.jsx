@@ -1,11 +1,10 @@
 import Image from "next/image";
 import { notFound } from "next/navigation";
+import { connection } from "next/server";
 import { eq } from "drizzle-orm";
 import { db } from "@/db";
 import { menuItems } from "@/db/schema";
 import AddToCartButton from "@/components/AddToCartButton";
-
-export const revalidate = 60;
 
 async function getItem(id) {
   const n = Number(id);
@@ -14,18 +13,20 @@ async function getItem(id) {
   return item;
 }
 
-// Dynamic route: pre-build a page for each item (SSG), refresh with ISR.
+// Item ids are resolved at request time so builds do not require a live database.
 export async function generateStaticParams() {
-  return (await db.select().from(menuItems)).map((i) => ({ itemId: String(i.id) }));
+  return [];
 }
 
 // Dynamic metadata (SEO)
 export async function generateMetadata({ params }) {
+  await connection();
   const item = await getItem((await params).itemId);
   return { title: item?.name ?? "Item", description: item?.description };
 }
 
 export default async function ItemPage({ params }) {
+  await connection();
   const item = await getItem((await params).itemId);
   if (!item) notFound();
 

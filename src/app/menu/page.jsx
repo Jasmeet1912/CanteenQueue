@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { connection } from "next/server";
 import { eq } from "drizzle-orm";
 import { db } from "@/db";
 import { menuItems } from "@/db/schema";
@@ -7,11 +8,9 @@ import AddToCartButton from "@/components/AddToCartButton";
 
 export const metadata = { title: "Menu" };
 
-// ISR: built once, refreshed at most every 60s, and instantly when a vendor
-// changes availability (revalidatePath("/menu") in the vendor action).
-export const revalidate = 60;
-
 export default async function MenuPage() {
+  // The menu comes from the live database; do not query it during static builds.
+  await connection();
   const items = await db.select().from(menuItems).where(eq(menuItems.available, true));
   const categories = [...new Set(items.map((i) => i.category))];
 
