@@ -6,34 +6,45 @@ export const metadata = { title: "Queue board" };
 // MODULE 3: public token board (no login, tokens only - no personal data).
 export const dynamic = "force-dynamic";
 
-function Column({ title, tokens, color }) {
+function Column({ title, tokens, tone, note }) {
   return (
-    <div className={`rounded border p-3 ${color}`}>
-      <h2 className="mb-2 font-semibold">{title}</h2>
-      {tokens.length === 0 && <p className="text-sm text-gray-500">-</p>}
-      <div className="flex flex-wrap gap-2">
+    <section className={`queue-column queue-${tone}`}>
+      <div className="queue-column-heading">
+        <div><span className="queue-indicator" aria-hidden="true" /><h2>{title}</h2></div>
+        <span className="queue-count">{tokens.length}</span>
+      </div>
+      <p className="queue-note">{note}</p>
+      {tokens.length === 0 ? (
+        <p className="queue-empty">Nothing here right now</p>
+      ) : (
+      <div className="queue-tokens">
         {tokens.map((t) => (
-          <span key={t.id} className="rounded bg-white px-3 py-1 text-xl font-bold" title={t.pickupSlot}>
-            #{t.tokenNumber}
+          <span key={t.id} className="queue-token" title={`Pickup ${t.pickupSlot}`}>
+            <span>Token</span> #{t.tokenNumber}
           </span>
         ))}
       </div>
-    </div>
+      )}
+    </section>
   );
 }
 
 export default async function QueuePage() {
   const { ready, preparing, waiting } = await getQueue();
   return (
-    <div className="space-y-4">
+    <div className="queue-page">
       <AutoRefresh seconds={5} />
-      <h1 className="text-2xl font-bold">Queue board</h1>
-      <div className="grid gap-4 sm:grid-cols-3">
-        <Column title="Ready - collect now" tokens={ready} color="bg-green-100" />
-        <Column title="Preparing" tokens={preparing} color="bg-yellow-100" />
-        <Column title="Waiting" tokens={waiting} color="bg-gray-100" />
+      <header className="page-heading">
+        <span className="eyebrow">Live canteen updates</span>
+        <h1 className="queue-title">Queue board</h1>
+        <p>Your token’s place in line, at a glance.</p>
+      </header>
+      <div className="queue-columns">
+        <Column title="Ready to collect" tokens={ready} tone="ready" note="Head to the counter when you see your token." />
+        <Column title="Preparing" tokens={preparing} tone="preparing" note="The kitchen is working on these orders." />
+        <Column title="Waiting" tokens={waiting} tone="waiting" note="Orders are lined up by pickup time." />
       </div>
-      <p className="text-sm text-gray-600">Ordered by pickup time, then token number. Updates every 5 seconds.</p>
+      <p className="queue-footnote"><span className="live-dot" aria-hidden="true" /> Updates automatically every 5 seconds</p>
     </div>
   );
 }

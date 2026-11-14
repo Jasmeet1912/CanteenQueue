@@ -12,7 +12,7 @@ export default function AddToCartButton(props) {
         setAdded(true);
         setTimeout(() => setAdded(false), 1000);
       }}
-      className="rounded bg-black px-3 py-1 text-sm text-white"
+      className="add-button"
     >
       {added ? "Added ✓" : "Add"}
     </button>

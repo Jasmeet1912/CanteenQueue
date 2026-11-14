@@ -16,32 +16,42 @@ export default async function MenuPage() {
   const categories = [...new Set(items.map((i) => i.category))];
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-bold">Menu</h1>
+    <div className="menu-page">
+      <header className="page-heading">
+        <span className="eyebrow">Fresh from the canteen</span>
+        <h1 className="menu-title">The menu</h1>
+        <p>Find a favourite, add it to your bag, and choose a pickup time.</p>
+      </header>
       {categories.map((cat) => (
-        <section key={cat} className="space-y-2">
-          <h2 className="text-lg font-semibold">{cat}</h2>
-          <div className="grid gap-3 sm:grid-cols-2">
+        <section key={cat} className="menu-category">
+          <div className="category-heading">
+            <h2>{cat}</h2>
+            <span>{items.filter((item) => item.category === cat).length} available</span>
+          </div>
+          <div className="menu-grid">
             {items
               .filter((i) => i.category === cat)
               .map((item) => (
-                <div key={item.id} className="flex items-center gap-3 rounded border bg-white p-3">
-                  <Image src="/food.svg" alt={item.name} width={80} height={50} className="rounded" />
-                  <div className="flex-1">
-                    <Link href={`/menu/${item.id}`} className="font-medium underline">
+                <article key={item.id} className="menu-item">
+                  <Link href={`/menu/${item.id}`} className="menu-image-link" aria-label={`View ${item.name}`}>
+                    <Image src="/food.svg" alt="" width={96} height={72} className="menu-image" />
+                  </Link>
+                  <div className="menu-item-info">
+                    <Link href={`/menu/${item.id}`} className="menu-item-name">
                       {item.name}
                     </Link>
-                    <p className="text-sm text-gray-600">₹{item.price}</p>
+                    <p className="menu-item-price">₹{item.price}</p>
                   </div>
                   <AddToCartButton id={item.id} name={item.name} price={item.price} />
-                </div>
+                </article>
               ))}
           </div>
         </section>
       ))}
-      <p className="text-sm">
-        Ready? <Link href="/cart" className="underline">Go to cart</Link>
-      </p>
+      <div className="menu-footer">
+        <p>Found something good?</p>
+        <Link href="/cart" className="page-action">Review your bag <span aria-hidden="true">→</span></Link>
+      </div>
     </div>
   );
 }

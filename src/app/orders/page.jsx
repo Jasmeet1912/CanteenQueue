@@ -9,7 +9,6 @@ export const metadata = { title: "My orders" };
 
 export default async function OrdersPage() {
   const session = await requireUser("STUDENT");
-  // Authorization: a student only ever queries their own orders.
   const myOrders = await db
     .select()
     .from(orders)
@@ -17,20 +16,40 @@ export default async function OrdersPage() {
     .orderBy(desc(orders.id));
 
   return (
-    <div className="space-y-4">
-      <h1 className="text-2xl font-bold">My orders</h1>
-      {myOrders.length === 0 && <p>No orders yet. <Link href="/menu" className="underline">Order now</Link></p>}
-      <ul className="space-y-2">
-        {myOrders.map((o) => (
-          <li key={o.id} className="flex items-center gap-4 rounded border bg-white p-3">
-            <Link href={`/orders/${o.id}`} className="font-semibold underline">
-              Token #{o.tokenNumber}
-            </Link>
-            <span className="flex-1 text-sm">{o.orderDate} · {o.pickupSlot} · ₹{o.total}</span>
-            <StatusBadge status={o.status} />
-          </li>
-        ))}
-      </ul>
+    <div className="orders-page">
+      <header className="page-heading">
+        <span className="eyebrow">Your lunch, all in one place</span>
+        <h1 className="orders-title">My orders</h1>
+        <p>Keep an eye on your tokens and pickup times.</p>
+      </header>
+
+      {myOrders.length === 0 ? (
+        <section className="orders-empty">
+          <span className="empty-mark" aria-hidden="true">01</span>
+          <h2>No orders yet</h2>
+          <p>Your next canteen favourite is only a few clicks away.</p>
+          <Link href="/menu" className="page-action">Browse the menu <span aria-hidden="true">→</span></Link>
+        </section>
+      ) : (
+        <ul className="orders-list">
+          {myOrders.map((order) => (
+            <li key={order.id} className="order-card">
+              <div className="order-token" aria-label={`Token ${order.tokenNumber}`}>
+                <span>YOUR TOKEN</span>
+                <strong>#{order.tokenNumber}</strong>
+              </div>
+              <div className="order-details">
+                <Link href={`/orders/${order.id}`} className="order-link">Order details <span aria-hidden="true">↗</span></Link>
+                <p>{order.orderDate} <span aria-hidden="true">·</span> Pickup at {order.pickupSlot}</p>
+              </div>
+              <div className="order-summary">
+                <strong>₹{order.total}</strong>
+                <StatusBadge status={order.status} />
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }
