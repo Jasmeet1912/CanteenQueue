@@ -1,4 +1,4 @@
-# Fifteen Minutes, One Samosa: Canteen Ordering and Queue Management
+# Fifteen Minutes, One Samosa: Canteen Ordering and Queue Managementt
 
 **Course:** INT257 (Next.js, App Router) · **Project:** P20
 
