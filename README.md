@@ -45,9 +45,9 @@ Code map: `src/lib/orders.js` (Module 1) Â· `src/actions/vendor.js` (Module 2) Â
 
 | Module | Owner |
 |---|---|
-| 1. Student Ordering | Jessica |
-| 2. Vendor Order Management | _Teammate 2_ |
-| 3. Queue & Payment Management | _Teammate 3_ |
+| 1. Student Ordering | Jasmeet Oberoi |
+| 2. Vendor Order Management | Sahil Kumar |
+| 3. Queue & Payment Management | Sesha Reddy Ekkuluri |
 
 ## Tech stack
 Next.js (App Router), Tailwind CSS, Drizzle ORM, SQLite (libsql), Zod, jose, bcryptjs.
