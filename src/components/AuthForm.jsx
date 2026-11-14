@@ -4,15 +4,26 @@ import { useActionState } from "react";
 
 export default function AuthForm({ action, withName, button }) {
   const [state, formAction, pending] = useActionState(action, undefined);
-  const input = "w-full rounded border p-2";
   return (
-    <form action={formAction} className="mx-auto max-w-sm space-y-3">
-      {withName && <input name="name" placeholder="Name" className={input} required />}
-      <input name="email" type="email" placeholder="Email" className={input} required />
-      <input name="password" type="password" placeholder="Password" className={input} required />
-      {state?.error && <p className="text-sm text-red-600">{state.error}</p>}
-      <button disabled={pending} className="w-full rounded bg-black p-2 text-white disabled:opacity-50">
+    <form action={formAction} className="auth-form">
+      {withName && (
+        <label className="auth-field">
+          <span>Your name</span>
+          <input name="name" type="text" autoComplete="name" placeholder="e.g. Sam Patel" required />
+        </label>
+      )}
+      <label className="auth-field">
+        <span>Email address</span>
+        <input name="email" type="email" autoComplete="email" placeholder="you@example.com" required />
+      </label>
+      <label className="auth-field">
+        <span>Password</span>
+        <input name="password" type="password" autoComplete={withName ? "new-password" : "current-password"} placeholder="Enter your password" required />
+      </label>
+      {state?.error && <p className="auth-error" role="alert">{state.error}</p>}
+      <button disabled={pending} className="auth-submit" type="submit">
         {pending ? "Please wait..." : button}
+        {!pending && <span aria-hidden="true">→</span>}
       </button>
     </form>
   );
