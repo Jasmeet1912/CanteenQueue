@@ -1,177 +1,115 @@
 # Fifteen Minutes, One Samosa: Canteen Ordering and Queue Management
 
-**Course:** INT257 – Modern Web Application Development (Next.js, App Router)
-**Project ID:** P20
+**Course:** INT257 (Next.js, App Router) · **Project:** P20
 
-## Problem Statement
+During short breaks, canteen counters suffer from unclear queues, shouted orders and payment delays. This app lets students order ahead, lets the vendor prepare orders, and gives everyone a token-based queue.
 
-During short class breaks, food counters suffer from unclear queues, shouted orders and payment delays. Students abandon purchases and vendors lose sales. This app lets students order ahead, lets vendors prepare orders in sequence, and gives everyone a clear token-based queue.
+**Flow:** Student order → Vendor preparation → Queue/token → Pickup completion.
 
-## Modules and Ownership
+## Run it
 
-| Module | Scope | Owner |
-|---|---|---|
-| Module 1 – Student Ordering | Browse menus, place orders, select pickup time/token | **Jessica** |
-| Module 2 – Vendor Order Management | Receive orders, prepare them, update preparation/pickup status | Teammate 2 |
-| Module 3 – Queue & Payment Management | Generate tokens, manage queue sequence, track payment/order completion | Teammate 3 |
-
-**Integration flow:** Student order → Vendor preparation → Queue/token → Pickup completion.
-
----
-
-## Module 1: Student Ordering
-
-### Features
-1. Student sign-up / login
-2. Browse canteen menu (categories, search, item details)
-3. Cart (add / remove / change quantity)
-4. Choose pickup time slot
-5. Place order and receive a token / order confirmation
-6. "My Orders" page with live status (Placed → Preparing → Ready → Picked up)
-
-### Routes (App Router)
-
-```
-/                          Landing page
-/login, /register          Auth
-/menu                      Menu listing (SSG + ISR)
-/menu/[itemId]             Item details (dynamic route)
-/cart                      Cart
-/checkout                  Pickup slot + place order (protected)
-/orders                    My orders (protected)
-/orders/[orderId]          Order status / token (protected, SSR)
-/api/menu                  GET menu items
-/api/orders                GET (own orders), POST (create)
-/api/orders/[orderId]      GET single order, PATCH (cancel)
-```
-
-### Planned Structure
-
-```
-src/
-  app/
-    (auth)/login, register
-    (student)/menu, cart, checkout, orders
-    api/menu, api/orders
-    layout.tsx, loading.tsx, error.tsx, not-found.tsx
-  components/   MenuCard, CartDrawer, SlotPicker, OrderStatusBadge
-  lib/          db.ts, auth.ts, validators.ts
-  actions/      placeOrder.ts, cartActions.ts
-prisma/         schema.prisma
-```
-
----
-
-## Syllabus Mapping (Module 1 ↔ INT257)
-
-### Unit I – Fundamentals, Routing and Navigation (CO1)
-| Syllabus topic | Where used in Module 1 |
-|---|---|
-| App Router, project structure, dev workflow | Whole project uses `src/app` structure |
-| File-based routing | `/menu`, `/cart`, `/checkout`, `/orders` |
-| Dynamic routes | `/menu/[itemId]`, `/orders/[orderId]` |
-| Nested routes and layouts | `(student)` route group with shared navbar/cart layout |
-| Navigation | `Link`, `useRouter`, active nav state |
-| Error and loading UI | `loading.tsx` skeletons for menu, `error.tsx` for failed orders, `not-found.tsx` |
-
-### Unit II – Rendering and Data Fetching (CO2)
-| Syllabus topic | Where used in Module 1 |
-|---|---|
-| SSG / ISR | Menu page is statically generated and revalidated when vendors update items |
-| SSR | Order status page rendered fresh per request |
-| Client-side rendering | Cart, slot picker, quantity controls |
-| Server vs Client Components | Menu list = server; cart and forms = client |
-| Fetch API, caching, revalidation | `fetch` with `next: { revalidate }` and `revalidateTag('menu')` |
-| Rendering strategy selection | Documented comparison in `docs/rendering-strategies.md` |
-
-### Unit III – APIs and Server Actions (CO3)
-| Syllabus topic | Where used in Module 1 |
-|---|---|
-| Route Handlers, REST, HTTP methods | `/api/menu` (GET), `/api/orders` (GET, POST), `/api/orders/[orderId]` (GET, PATCH) |
-| Dynamic route handlers | `/api/orders/[orderId]` |
-| Request/response handling | Status codes, JSON errors, validation responses |
-| Server Actions, form handling | `placeOrder` action for checkout form |
-| Form validation | Zod schema: items, quantity, pickup slot |
-| Data mutations | Create order, cancel order |
-| Optimistic UI | Cart updates and order placement feedback with `useOptimistic` |
-| File upload | Optional: student profile photo |
-
-### Unit IV – Authentication and Database (CO4)
-| Syllabus topic | Where used in Module 1 |
-|---|---|
-| Authentication, session management | Student login with session cookies (Auth.js or custom JWT) |
-| Protected routes | `/checkout` and `/orders` require login (middleware/proxy) |
-| Authorization, RBAC | Roles: `STUDENT`, `VENDOR`, `ADMIN`. Students see only their own orders |
-| ORM basics, DB connectivity | Prisma + PostgreSQL/SQLite |
-| CRUD operations | Users, MenuItems (read), Orders (create/read/update) |
-| Data validation, env variables | Zod + `.env` (`DATABASE_URL`, `AUTH_SECRET`) |
-
-### Unit V – Performance, SEO and Deployment (CO5)
-| Syllabus topic | Where used in Module 1 |
-|---|---|
-| Image optimization | `next/image` for food photos |
-| Metadata API | Per-page titles; dynamic metadata on `/menu/[itemId]` |
-| Code splitting, lazy loading | `next/dynamic` for cart drawer and slot picker |
-| SEO fundamentals | Semantic HTML, metadata, sitemap |
-| Production build, env config | `next build`, separate dev/prod env files |
-| Deployment, monitoring, error logging | Vercel deployment, error boundary logging |
-
-### Unit VI – Advanced Features and Industry Practices (CO6)
-| Syllabus topic | Where used in Module 1 |
-|---|---|
-| Intercepting / Parallel routes | Item details shown as modal over `/menu` (optional) |
-| Project architecture, component organization | Folder structure above |
-| Security best practices | Input validation, auth checks in every action/handler, no secrets in client |
-| Testing overview | Unit tests for validators; basic API tests |
-
----
-
-## Practicals Coverage (Module 1)
-
-| # | Syllabus practical | Module 1 deliverable |
-|---|---|---|
-| 1 | Create Next.js app, explore App Router | Project setup and structure |
-| 2 | File-based, nested, dynamic routing, layouts, loading/error UI | Menu, item, cart, orders routes |
-| 3 | Server/client data fetching, compare rendering strategies | Menu (ISR) vs order status (SSR) vs cart (CSR) |
-| 4 | Caching and revalidation | Menu cache + `revalidateTag` |
-| 5 | REST APIs with Route Handlers | `/api/menu`, `/api/orders` |
-| 6 | Forms, validation, file handling, Server Actions | Checkout form + `placeOrder` |
-| 7 | ORM + CRUD | Prisma models for User, MenuItem, Order, OrderItem |
-| 8 | Auth, sessions, protected routes, RBAC | Student login + role checks |
-| 9 | Image optimization, metadata, code splitting, lazy loading | Menu images, metadata, dynamic imports |
-| 10 | Build and deploy | Vercel deployment with env config |
-
----
-
-## Integration Contract with Other Modules
-
-Shared **Order** record, agreed with teammates:
-
-```
-Order {
-  id, userId, status, pickupSlot, totalAmount,
-  tokenNumber (set by Module 3),
-  paymentStatus (managed by Module 3),
-  createdAt
-}
-status: PLACED -> PREPARING -> READY -> PICKED_UP   (Module 2 updates)
-```
-
-- **Module 1 (me):** creates orders with `status = PLACED`, shows status to the student.
-- **Module 2:** reads `PLACED` orders, updates status.
-- **Module 3:** assigns `tokenNumber`, orders the queue, updates `paymentStatus`.
-
-## Tech Stack
-Next.js (App Router), TypeScript, Prisma, Zod, Auth.js, Tailwind CSS.
-
-## Getting Started
 ```bash
 npm install
-cp .env.example .env
-npx prisma migrate dev
-npm run dev
+cp .env.example .env     # Windows: copy .env.example .env
+npm run setup            # creates dev.db and seeds demo data
+npm run dev              # http://localhost:3000
 ```
 
-## Git Workflow
-- `main`: stable. Each member works on `module-1-student`, `module-2-vendor`, `module-3-queue`.
-- Open pull requests into `main`. Agree on the shared Prisma schema before changing it.
+Demo logins (after `npm run setup`):
+
+| Role | Email | Password |
+|---|---|---|
+| Student | student@demo.com | student123 |
+| Vendor | vendor@demo.com | vendor123 |
+
+To reset the data any time: `npm run db:seed`.
+
+## Modules
+
+| Module | Who uses it | Pages / API |
+|---|---|---|
+| **1. Student Ordering** | Student | `/menu`, `/menu/[itemId]`, `/cart`, `/checkout`, `/orders`, `/orders/[orderId]`, `/api/menu`, `/api/orders`, `/api/orders/[orderId]` |
+| **2. Vendor Order Management** | Vendor | `/vendor` (incoming orders, Start preparing → Mark ready, sold-out toggle) |
+| **3. Queue & Payment Management** | Vendor + public | `/queue` (public token board), `/counter` (mark paid, hand over) |
+
+How they connect (one shared `orders` table):
+
+1. Student places an order → Module 1 saves it as `PLACED` and Module 3's `nextToken()` gives it a token (1, 2, 3 ... restarting each day).
+2. Vendor moves it `PLACED → PREPARING → READY` (Module 2).
+3. Queue board shows tokens ordered by pickup slot, then token number (Module 3).
+4. At the counter the vendor marks it paid. Hand-over only works when the order is `READY` **and** `PAID`, then it becomes `PICKED_UP`.
+
+Code map: `src/lib/orders.ts` (Module 1) · `src/actions/vendor.ts` (Module 2) · `src/lib/queue.ts` + `src/actions/counter.ts` (Module 3) · `src/db/schema.ts` (shared).
+
+## Syllabus mapping (INT257)
+
+### Unit I: Fundamentals, Routing and Navigation
+| Topic | Where |
+|---|---|
+| App Router, project structure | `src/app`, `src/components`, `src/lib`, `src/actions`, `src/db` |
+| File-based routing | `/menu`, `/cart`, `/checkout`, `/orders`, `/vendor`, `/counter`, `/queue` |
+| Dynamic routes | `/menu/[itemId]`, `/orders/[orderId]`, `/api/orders/[orderId]` |
+| Route groups and layouts | `(auth)` group for login/register; root `layout.tsx` with navbar |
+| Navigation | `Link`, `usePathname` (active link in `AuthLinks.tsx`) |
+| Loading, error and not-found UI | `loading.tsx`, `orders/loading.tsx`, `error.tsx`, `not-found.tsx` |
+
+### Unit II: Rendering and Data Fetching
+| Topic | Where |
+|---|---|
+| SSG | `/menu/[itemId]` via `generateStaticParams` |
+| ISR / revalidation | `/menu` has `revalidate = 60`; vendor "sold out" calls `revalidatePath("/menu")` |
+| SSR | `/orders/[orderId]`, `/vendor`, `/counter`, `/queue` (rendered on every request) |
+| CSR | `/cart` (cart lives in the browser's localStorage) |
+| Server vs Client Components | Pages are server components; `AddToCartButton`, `CheckoutForm`, `AutoRefresh` are client components |
+| Live updates | `AutoRefresh` calls `router.refresh()` every 5 s |
+
+### Unit III: APIs and Server Actions
+| Topic | Where |
+|---|---|
+| Route Handlers, HTTP methods | `GET /api/menu`, `GET/POST /api/orders`, `GET/PATCH /api/orders/[orderId]`, `GET /api/me` |
+| Status codes and error handling | 400 invalid, 401 not logged in, 403 forbidden, 404 not found, 409 conflict, 201 created |
+| Server Actions | `placeOrder`, `cancelMyOrder`, `advanceOrder`, `toggleAvailability`, `recordPayment`, `finishPickup`, `login`, `register`, `logout` |
+| Forms and validation | Zod schemas in `src/lib/orders.ts` and `src/actions/auth.ts`; `useActionState` shows errors |
+| Optimistic UI | `CancelOrderButton` (`useOptimistic`) |
+
+### Unit IV: Authentication and Database
+| Topic | Where |
+|---|---|
+| Authentication, sessions | `src/lib/session.ts`: signed JWT in an httpOnly cookie (`jose`), passwords hashed with `bcryptjs` |
+| Protected routes | `src/proxy.ts` (optimistic check) + `requireUser()` in every protected page/action |
+| Authorization / RBAC | Roles `STUDENT` and `VENDOR`. Students can only read their own orders; vendor pages are vendor-only |
+| ORM and DB connection | Drizzle ORM + SQLite (`src/db/`) |
+| CRUD | Users (create/read), menu items (read/update), orders (create/read/update) |
+| Env variables | `.env` with `DATABASE_URL` and `AUTH_SECRET` |
+
+### Unit V: Performance, SEO and Deployment
+| Topic | Where |
+|---|---|
+| Image optimization | `next/image` on menu and item pages |
+| Metadata API | Title template in `layout.tsx`; `generateMetadata` on `/menu/[itemId]` |
+| Code splitting, lazy loading | `next/dynamic` for `SlotPicker` in `CheckoutForm.tsx` |
+| Production build | `npm run build` / `npm start` |
+| Error logging | `error.tsx` logs the error (replace with a monitoring service in production) |
+
+### Unit VI: Advanced Features and Industry Practices
+| Topic | Where |
+|---|---|
+| Project architecture | Folder layout above; logic in `lib/`, mutations in `actions/` |
+| Security practices | Prices always read from the DB (never trusted from the browser), Zod validation, auth check in every action/handler, httpOnly cookies, secrets in `.env` |
+
+### Not included (kept simple)
+File upload, intercepting/parallel routes and automated unit tests are not built. Real online payment is not integrated either: payment is recorded by the vendor at the counter.
+
+## Team split
+
+| Module | Owner |
+|---|---|
+| 1. Student Ordering | Jessica |
+| 2. Vendor Order Management | _Teammate 2_ |
+| 3. Queue & Payment Management | _Teammate 3_ |
+
+## Tech stack
+Next.js (App Router), TypeScript, Tailwind CSS, Drizzle ORM, SQLite (better-sqlite3), Zod, jose, bcryptjs.
+
+## Deploying
+SQLite is a local file, so it works for a demo on your own machine or a VM. Serverless hosts like Vercel have no persistent disk. To deploy there, switch Drizzle to a hosted database (Turso or Postgres) and set `DATABASE_URL` and `AUTH_SECRET`.

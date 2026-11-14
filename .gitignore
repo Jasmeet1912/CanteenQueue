@@ -10,4 +10,6 @@ build/
 .vercel
 *.tsbuildinfo
 next-env.d.ts
-prisma/*.db
+*.db
+*.db-shm
+*.db-wal
