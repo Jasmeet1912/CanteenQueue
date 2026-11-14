@@ -7,6 +7,14 @@ const client = createClient({ url: process.env.DATABASE_URL ?? "file:dev.db" });
 const db = drizzle(client, { schema });
 
 async function main() {
+  if (process.argv.includes("--if-empty")) {
+    const existing = await client.execute("SELECT COUNT(*) AS count FROM users").catch(() => ({ rows: [{ count: 0 }] }));
+    if (Number(existing.rows[0]?.count ?? 0) > 0) {
+      console.log("Database already has users; skipping seed.");
+      return;
+    }
+  }
+
   await db.delete(schema.orderItems);
   await db.delete(schema.orders);
   await db.delete(schema.menuItems);

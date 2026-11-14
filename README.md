@@ -53,4 +53,8 @@ Code map: `src/lib/orders.js` (Module 1) · `src/actions/vendor.js` (Module 2) �
 Next.js (App Router), Tailwind CSS, Drizzle ORM, SQLite (libsql), Zod, jose, bcryptjs.
 
 ## Deploying
-SQLite is a local file, so it works for a demo on your own machine or a VM. Serverless hosts like Vercel have no persistent disk. To deploy there, switch Drizzle to a hosted database (Turso or Postgres) and set `DATABASE_URL` and `AUTH_SECRET`.
+The repository includes a Render Blueprint in `render.yaml`. It creates a Node web service in Singapore with a 1 GB persistent disk, initializes the SQLite schema on startup, and seeds the demo menu and accounts only when the database is empty. The disk requires Render's paid Starter service plan; SQLite on an ephemeral filesystem would lose orders after a restart or deploy.
+
+To deploy, push this repository to GitHub, then in Render choose **New + → Blueprint**, connect the repository, and approve the Blueprint. Render generates `AUTH_SECRET` automatically. After the first deploy, the app is available at its `onrender.com` URL. Demo logins are listed above; change their passwords before sharing a public deployment.
+
+The persistent disk is attached to one service instance, so this SQLite setup is for a small demo and cannot be scaled horizontally. For a larger deployment, use a hosted database.

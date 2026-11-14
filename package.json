@@ -6,9 +6,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "render:start": "npm run db:push && npm run db:seed:if-empty && npm run start",
     "lint": "eslint",
     "db:push": "drizzle-kit push",
     "db:seed": "tsx src/db/seed.js",
+    "db:seed:if-empty": "tsx src/db/seed.js --if-empty",
     "setup": "npm run db:push && npm run db:seed"
   },
   "dependencies": {

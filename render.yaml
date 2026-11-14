@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: canteen-queue
+    runtime: node
+    plan: starter
+    region: singapore
+    buildCommand: npm ci --include=dev && npm run build
+    startCommand: npm run render:start
+    healthCheckPath: /menu
+    disk:
+      name: canteen-data
+      mountPath: /var/data
+      sizeGB: 1
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        value: file:/var/data/canteen.db
+      - key: AUTH_SECRET
+        generateValue: true
