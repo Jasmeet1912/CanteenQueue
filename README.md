@@ -9,7 +9,7 @@ During short breaks, canteen counters suffer from unclear queues, shouted orders
 ## Run it
 
 ```bash
-npm install
+npm install   # needs Node 20 or newer
 cp .env.example .env     # Windows: copy .env.example .env
 npm run setup            # creates dev.db and seeds demo data
 npm run dev              # http://localhost:3000
@@ -39,7 +39,7 @@ How they connect (one shared `orders` table):
 3. Queue board shows tokens ordered by pickup slot, then token number (Module 3).
 4. At the counter the vendor marks it paid. Hand-over only works when the order is `READY` **and** `PAID`, then it becomes `PICKED_UP`.
 
-Code map: `src/lib/orders.ts` (Module 1) · `src/actions/vendor.ts` (Module 2) · `src/lib/queue.ts` + `src/actions/counter.ts` (Module 3) · `src/db/schema.ts` (shared).
+Code map: `src/lib/orders.js` (Module 1) · `src/actions/vendor.js` (Module 2) · `src/lib/queue.js` + `src/actions/counter.js` (Module 3) · `src/db/schema.js` (shared).
 
 ## Syllabus mapping (INT257)
 
@@ -49,9 +49,9 @@ Code map: `src/lib/orders.ts` (Module 1) · `src/actions/vendor.ts` (Module 2) �
 | App Router, project structure | `src/app`, `src/components`, `src/lib`, `src/actions`, `src/db` |
 | File-based routing | `/menu`, `/cart`, `/checkout`, `/orders`, `/vendor`, `/counter`, `/queue` |
 | Dynamic routes | `/menu/[itemId]`, `/orders/[orderId]`, `/api/orders/[orderId]` |
-| Route groups and layouts | `(auth)` group for login/register; root `layout.tsx` with navbar |
-| Navigation | `Link`, `usePathname` (active link in `AuthLinks.tsx`) |
-| Loading, error and not-found UI | `loading.tsx`, `orders/loading.tsx`, `error.tsx`, `not-found.tsx` |
+| Route groups and layouts | `(auth)` group for login/register; root `layout.jsx` with navbar |
+| Navigation | `Link`, `usePathname` (active link in `AuthLinks.jsx`) |
+| Loading, error and not-found UI | `loading.jsx`, `orders/loading.jsx`, `error.jsx`, `not-found.jsx` |
 
 ### Unit II: Rendering and Data Fetching
 | Topic | Where |
@@ -69,16 +69,16 @@ Code map: `src/lib/orders.ts` (Module 1) · `src/actions/vendor.ts` (Module 2) �
 | Route Handlers, HTTP methods | `GET /api/menu`, `GET/POST /api/orders`, `GET/PATCH /api/orders/[orderId]`, `GET /api/me` |
 | Status codes and error handling | 400 invalid, 401 not logged in, 403 forbidden, 404 not found, 409 conflict, 201 created |
 | Server Actions | `placeOrder`, `cancelMyOrder`, `advanceOrder`, `toggleAvailability`, `recordPayment`, `finishPickup`, `login`, `register`, `logout` |
-| Forms and validation | Zod schemas in `src/lib/orders.ts` and `src/actions/auth.ts`; `useActionState` shows errors |
+| Forms and validation | Zod schemas in `src/lib/orders.js` and `src/actions/auth.js`; `useActionState` shows errors |
 | Optimistic UI | `CancelOrderButton` (`useOptimistic`) |
 
 ### Unit IV: Authentication and Database
 | Topic | Where |
 |---|---|
-| Authentication, sessions | `src/lib/session.ts`: signed JWT in an httpOnly cookie (`jose`), passwords hashed with `bcryptjs` |
-| Protected routes | `src/proxy.ts` (optimistic check) + `requireUser()` in every protected page/action |
+| Authentication, sessions | `src/lib/session.js`: signed JWT in an httpOnly cookie (`jose`), passwords hashed with `bcryptjs` |
+| Protected routes | `src/proxy.js` (optimistic check) + `requireUser()` in every protected page/action |
 | Authorization / RBAC | Roles `STUDENT` and `VENDOR`. Students can only read their own orders; vendor pages are vendor-only |
-| ORM and DB connection | Drizzle ORM + SQLite (`src/db/`) |
+| ORM and DB connection | Drizzle ORM + SQLite via libsql (`src/db/`) |
 | CRUD | Users (create/read), menu items (read/update), orders (create/read/update) |
 | Env variables | `.env` with `DATABASE_URL` and `AUTH_SECRET` |
 
@@ -86,10 +86,10 @@ Code map: `src/lib/orders.ts` (Module 1) · `src/actions/vendor.ts` (Module 2) �
 | Topic | Where |
 |---|---|
 | Image optimization | `next/image` on menu and item pages |
-| Metadata API | Title template in `layout.tsx`; `generateMetadata` on `/menu/[itemId]` |
-| Code splitting, lazy loading | `next/dynamic` for `SlotPicker` in `CheckoutForm.tsx` |
+| Metadata API | Title template in `layout.jsx`; `generateMetadata` on `/menu/[itemId]` |
+| Code splitting, lazy loading | `next/dynamic` for `SlotPicker` in `CheckoutForm.jsx` |
 | Production build | `npm run build` / `npm start` |
-| Error logging | `error.tsx` logs the error (replace with a monitoring service in production) |
+| Error logging | `error.jsx` logs the error (replace with a monitoring service in production) |
 
 ### Unit VI: Advanced Features and Industry Practices
 | Topic | Where |
@@ -109,7 +109,7 @@ File upload, intercepting/parallel routes and automated unit tests are not built
 | 3. Queue & Payment Management | _Teammate 3_ |
 
 ## Tech stack
-Next.js (App Router), TypeScript, Tailwind CSS, Drizzle ORM, SQLite (better-sqlite3), Zod, jose, bcryptjs.
+Next.js (App Router), Tailwind CSS, Drizzle ORM, SQLite (libsql), Zod, jose, bcryptjs.
 
 ## Deploying
 SQLite is a local file, so it works for a demo on your own machine or a VM. Serverless hosts like Vercel have no persistent disk. To deploy there, switch Drizzle to a hosted database (Turso or Postgres) and set `DATABASE_URL` and `AUTH_SECRET`.
