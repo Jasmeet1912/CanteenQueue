@@ -9,9 +9,9 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className="min-h-screen bg-gray-50 text-gray-900">
+      <body className="min-h-screen">
         <Navbar />
-        <main className="mx-auto max-w-4xl p-4">{children}</main>
+        <main className="page-shell mx-auto w-full">{children}</main>
       </body>
     </html>
   );

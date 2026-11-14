@@ -19,16 +19,15 @@ export default function AuthLinks() {
       .catch(() => setRole(null));
   }, [pathname]);
 
-  const active = (p) => (pathname.startsWith(p) ? "font-bold underline" : "");
+  const active = (p) => (pathname.startsWith(p) ? "nav-link is-active" : "nav-link");
 
   if (role === undefined) return null;
   if (!role) {
     return (
       <>
-        <Link href="/cart" className={active("/cart")}>Cart ({count})</Link>
-        <span className="ml-auto" />
-        <Link href="/login">Login</Link>
-        <Link href="/register">Register</Link>
+        <Link href="/cart" className={active("/cart")}>Cart <span className="ml-1">({count})</span></Link>
+        <Link href="/login" className="nav-link">Login</Link>
+        <Link href="/register" className="nav-link nav-cta">Join</Link>
       </>
     );
   }
@@ -36,7 +35,7 @@ export default function AuthLinks() {
     <>
       {role === "STUDENT" ? (
         <>
-          <Link href="/cart" className={active("/cart")}>Cart ({count})</Link>
+          <Link href="/cart" className={active("/cart")}>Cart <span className="ml-1">({count})</span></Link>
           <Link href="/orders" className={active("/orders")}>My orders</Link>
         </>
       ) : (
@@ -45,8 +44,8 @@ export default function AuthLinks() {
           <Link href="/counter" className={active("/counter")}>Counter</Link>
         </>
       )}
-      <form action={logout} className="ml-auto">
-        <button className="underline">Logout</button>
+      <form action={logout} className="nav-logout">
+        <button className="nav-link" type="submit">Logout</button>
       </form>
     </>
   );
