@@ -7,8 +7,7 @@ import { SLOTS } from "./status";
 // ---------- MODULE 3: Queue & Payment Management ----------
 
 export function today() {
-  return new Date().toLocaleDateString("en-CA"); // YYYY-MM-DD
-}
+return new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });}
 
 // Token generation: 1, 2, 3 ... restarting every day.
 // Called by Module 1 when an order is placed (the integration point).

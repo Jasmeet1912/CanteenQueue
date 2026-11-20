@@ -3,6 +3,8 @@ import { drizzle } from "drizzle-orm/libsql";
 import bcrypt from "bcryptjs";
 import * as schema from "./schema";
 
+try { process.loadEnvFile(".env"); } catch {}
+
 const client = createClient({
   url: process.env.DATABASE_URL ?? "file:dev.db",
   authToken: process.env.DATABASE_AUTH_TOKEN,
